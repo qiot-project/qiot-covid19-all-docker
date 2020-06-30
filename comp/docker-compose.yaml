@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
   activemq:
-    image: vromero/activemq-artemis:2.9.0-alpine
+    image: vromero/activemq-artemis
     restart: "no"
     ports:
       - "8161:8161"
@@ -47,13 +47,6 @@ services:
     ports:
       - "9999:9999"
 networks:
-  edge-sensors:
-    driver: host
-  activemq:
-    driver: host
-  kafka:
-    driver: host
-  kafdrop:
-    driver: host
-  influxdb:
-    driver: host
+  default:
+    external:
+      name: qiot

@@ -6,5 +6,6 @@ services:
     ports:
       - "5014:5014"
 networks:
-  endpoint-mqtt:
-    driver: host
+  default:
+    external:
+      name: qiot
