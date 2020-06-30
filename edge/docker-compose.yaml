@@ -1,0 +1,10 @@
+version: '3'
+services:
+  edge-service:
+    image: quay.io/qiot/qiot-service
+    restart: "no"
+    ports:
+      - "8080:8080"
+networks:
+  edge-service:
+    driver: host

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  endpoint-mqtt:
+    image: quay.io/qiot/qiot-datahub-endpoint-mqtt
+    restart: "no"
+    ports:
+      - "5014:5014"
+networks:
+  endpoint-mqtt:
+    driver: host
