@@ -5,6 +5,10 @@ services:
     restart: "no"
     ports:
       - "8080:8080"
+    environment:
+      SENSORSURL: "http://edge-sensors:5000/"
+      DATAHUBURL: "http://endpoint-registration:5016/"
+      MQTTHOST: "activemq"
 networks:
   default:
     external:

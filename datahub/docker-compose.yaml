@@ -1,10 +1,28 @@
 version: '3'
 services:
+  endpoint-registration:
+    image: quay.io/qiot/qiot-datahub-registration
+    restart: "no"
+    ports:
+      - "5016:5016"
   endpoint-mqtt:
     image: quay.io/qiot/qiot-datahub-endpoint-mqtt
     restart: "no"
-    ports:
-      - "5014:5014"
+    environment:
+      AMQPHOST: "activemq"
+      MQTTHOST: "activemq"
+  gasstreamer:
+    image: quay.io/qiot/qiot-datahub-streamer-gas
+    restart: "no"
+    environment:
+      MESSAGINGHOST: "activemq"
+      KAFKABOOTSTRAPURL: "kafka:9092"
+  pollutionstreamer:
+    image: quay.io/qiot/qiot-datahub-streamer-pollution
+    restart: "no"
+    environment:
+      MESSAGINGHOST: "activemq"
+      KAFKABOOTSTRAPURL: "kafka:9092"
 networks:
   default:
     external:
