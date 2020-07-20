@@ -1,28 +1,48 @@
 version: '3'
 services:
-  endpoint-registration:
+  datahub-registration:
     image: quay.io/qiot/qiot-datahub-registration
+    container_name: "datahub-registration"
     restart: "no"
     ports:
       - "5016:5016"
+    environment:
+      MONGODBURL: "mongo:27017"
   endpoint-mqtt:
     image: quay.io/qiot/qiot-datahub-endpoint-mqtt
+    container_name: "datahub-endpoint-mqtt"
     restart: "no"
     environment:
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
-  gasstreamer:
-    image: quay.io/qiot/qiot-datahub-streamer-gas
+#  gasstreamer:
+#    image: quay.io/qiot/qiot-datahub-streamer-gas
+#    container_name: "datahub-streamer-gas"
+#    restart: "no"
+#    environment:
+#      MESSAGINGHOST: "activemq"
+#      KAFKABOOTSTRAPURL: "kafka:9092"
+#  pollutionstreamer:
+#    image: quay.io/qiot/qiot-datahub-streamer-pollution
+#    container_name: "datahub-streamer-pollution"
+#    restart: "no"
+#    environment:
+#      MESSAGINGHOST: "activemq"
+#      KAFKABOOTSTRAPURL: "kafka:9092"
+  gasstorer:
+    image: quay.io/qiot/qiot-datahub-storer-gas
+    container_name: "datahub-storer-gas"
     restart: "no"
     environment:
-      MESSAGINGHOST: "activemq"
       KAFKABOOTSTRAPURL: "kafka:9092"
-  pollutionstreamer:
-    image: quay.io/qiot/qiot-datahub-streamer-pollution
+      MONGODBURL: "mongo:27017"
+  pollutionstorer:
+    image: quay.io/qiot/qiot-datahub-storer-pollution
+    container_name: "datahub-storer-pollution"
     restart: "no"
     environment:
-      MESSAGINGHOST: "activemq"
       KAFKABOOTSTRAPURL: "kafka:9092"
+      MONGODBURL: "mongo:27017"
 networks:
   default:
     external:

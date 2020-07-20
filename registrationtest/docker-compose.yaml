@@ -1,0 +1,14 @@
+version: '3'
+services:
+  datahub-registration:
+    image: quay.io/qiot/qiot-datahub-registration
+    container_name: "datahub-registration"
+    restart: "no"
+    ports:
+      - "5016:5016"
+    environment:
+      MONGODBURL: "mongo:27017"
+networks:
+  default:
+    external:
+      name: qiot
