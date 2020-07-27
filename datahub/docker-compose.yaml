@@ -1,11 +1,23 @@
 version: '3'
 services:
+  edge-sensors:
+    image: quay.io/qiot/qiot-sensors-emulator
+    container_name: "edge-sensors"
+    restart: "no"
+    ports:
+      - "5000:5000"
   datahub-registration:
     image: quay.io/qiot/qiot-datahub-registration
     container_name: "datahub-registration"
     restart: "no"
     ports:
       - "5016:5016"
+    environment:
+      MONGODBURL: "mongo:27017"
+  datahub-aggregation:
+    image: quay.io/qiot/qiot-datahub-aggregation
+    container_name: "datahub-aggregation"
+    restart: "no"
     environment:
       MONGODBURL: "mongo:27017"
   endpoint-mqtt:

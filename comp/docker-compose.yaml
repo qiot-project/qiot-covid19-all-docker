@@ -1,11 +1,5 @@
 version: '3'
 services:
-  edge-sensors:
-    image: quay.io/qiot/qiot-sensors-emulator
-    container_name: "edge-sensors"
-    restart: "no"
-    ports:
-      - "5000:5000"
   activemq:
     image: vromero/activemq-artemis:2-alpine-latest
     container_name: "activemq"
