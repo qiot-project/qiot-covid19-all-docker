@@ -13,12 +13,16 @@ services:
     ports:
       - "5016:5016"
     environment:
+      HTTPPORT: "5016"
       MONGODBURL: "mongo:27017"
   datahub-aggregation:
     image: quay.io/qiot/qiot-datahub-aggregation
     container_name: "datahub-aggregation"
     restart: "no"
+    ports:
+      - "5018:5018"
     environment:
+      HTTPPORT: "5018"
       MONGODBURL: "mongo:27017"
   endpoint-mqtt:
     image: quay.io/qiot/qiot-datahub-endpoint-mqtt
