@@ -7,8 +7,8 @@ services:
     ports:
       - "8091:8080"
     environment:
-      STATIONSERIAL: "stationserial01"
-      STATIONNAME: "station01"
+      STATIONSERIAL: "teststationserial01"
+      STATIONNAME: "teststation01"
       STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
       SENSORSURL: "http://edge-sensors:5000/"
       DATAHUBURL: "http://datahub-registration:5016/"
@@ -22,8 +22,8 @@ services:
     ports:
       - "8092:8080"
     environment:
-      STATIONSERIAL: "stationserial02"
-      STATIONNAME: "station02"
+      STATIONSERIAL: "teststationserial02"
+      STATIONNAME: "teststation02"
       STATIONADDRESS: "soriano calabro"
       SENSORSURL: "http://edge-sensors:5000/"
       DATAHUBURL: "http://datahub-registration:5016/"
@@ -37,8 +37,8 @@ services:
     ports:
       - "8093:8080"
     environment:
-      STATIONSERIAL: "stationserial03"
-      STATIONNAME: "station03"
+      STATIONSERIAL: "teststationserial03"
+      STATIONNAME: "teststation03"
       STATIONADDRESS: "minsk"
       SENSORSURL: "http://edge-sensors:5000/"
       DATAHUBURL: "http://datahub-registration:5016/"
