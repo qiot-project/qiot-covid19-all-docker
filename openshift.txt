@@ -1,0 +1,45 @@
+/*** REGISTRATION ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-registration.git  --name=qiot-registration
+oc patch bc/qiot-registration -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-registration
+oc new-app qiot-registration -e MONGODBURL=mongodb:27017
+oc expose svc/qiot-registration
+
+/*** IMPORTER ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-importer.git  --name=qiot-importer
+oc patch bc/qiot-importer -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-importer
+oc new-app qiot-importer -e MONGODBURL=mongodb:27017
+oc expose svc/qiot-importer
+
+/*** MQTT ENDPOINT ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-endpoint.git --context-dir=qiot-datahub-endpoint-mqtt  --name=qiot-endpoint-mqtt
+oc patch bc/qiot-endpoint-mqtt -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-endpoint-mqtt
+oc new-app qiot-endpoint-mqtt -e MQTTHOST=qiot-broker-hdls-svc -e KAFKABOOTSTRAPURL=kafka-cluster-kafka-bootstrap:9092
+
+/*** GAS STORER ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-storer.git --context-dir=qiot-datahub-storer-gas  --name=qiot-storer-gas
+oc patch bc/qiot-storer-gas -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-storer-gas
+oc new-app qiot-storer-gas -e MONGODBURL=mongodb:27017 -e KAFKABOOTSTRAPURL=kafka-cluster-kafka-bootstrap:9092
+
+/*** POLLUTION STORER ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-storer.git --context-dir=qiot-datahub-storer-pollution  --name=qiot-storer-pollution
+oc patch bc/qiot-storer-pollution -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-storer-pollution
+oc new-app qiot-storer-pollution -e MONGODBURL=mongodb:27017 -e KAFKABOOTSTRAPURL=kafka-cluster-kafka-bootstrap:9092
+
+/*** AGGREGATION ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-aggregation.git  --name=qiot-aggregation
+oc patch bc/qiot-aggregation -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-aggregation
+oc new-app qiot-aggregation -e MONGODBURL=mongodb:27017
+oc expose svc/qiot-aggregation
+
+/*** QUERY ***/
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:20.1.0-java11~https://github.com/andreabattaglia/qiot-datahub-query.git  --name=qiot-query
+oc patch bc/qiot-query -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc start-build qiot-query
+oc new-app qiot-query -e MONGODBURL=mongodb:27017
+oc expose svc/qiot-query
