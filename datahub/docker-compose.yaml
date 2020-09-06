@@ -1,11 +1,5 @@
 version: '3'
 services:
-  edge-sensors:
-    image: quay.io/qiot/qiot-sensors-emulator
-    container_name: "edge-sensors"
-    restart: "no"
-    ports:
-      - "5000:5000"
   datahub-registration:
     image: quay.io/qiot/qiot-datahub-registration
     container_name: "datahub-registration"
@@ -13,6 +7,7 @@ services:
     ports:
       - "5016:5016"
     environment:
+      QUARKUS_PROFILE: "staging"
       HTTPPORT: "5016"
       MONGODBURL: "mongo:27017"
   datahub-aggregation:
@@ -22,13 +17,25 @@ services:
     ports:
       - "5018:5018"
     environment:
+      QUARKUS_PROFILE: "staging"
       HTTPPORT: "5018"
+      MONGODBURL: "mongo:27017"
+  datahub-query:
+    image: quay.io/qiot/qiot-datahub-query
+    container_name: "datahub-query"
+    restart: "no"
+    ports:
+      - "5200:5200"
+    environment:
+      QUARKUS_PROFILE: "staging"
+      HTTPPORT: "5200"
       MONGODBURL: "mongo:27017"
   endpoint-mqtt:
     image: quay.io/qiot/qiot-datahub-endpoint-mqtt
     container_name: "datahub-endpoint-mqtt"
     restart: "no"
     environment:
+      QUARKUS_PROFILE: "staging"
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
 #  gasstreamer:
@@ -50,6 +57,7 @@ services:
     container_name: "datahub-storer-gas"
     restart: "no"
     environment:
+      QUARKUS_PROFILE: "staging"
       KAFKABOOTSTRAPURL: "kafka:9092"
       MONGODBURL: "mongo:27017"
   pollutionstorer:
@@ -57,6 +65,7 @@ services:
     container_name: "datahub-storer-pollution"
     restart: "no"
     environment:
+      QUARKUS_PROFILE: "staging"
       KAFKABOOTSTRAPURL: "kafka:9092"
       MONGODBURL: "mongo:27017"
 networks:

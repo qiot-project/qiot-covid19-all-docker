@@ -7,15 +7,14 @@ services:
     ports:
       - "8091:8080"
     environment:
-      QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial01"
       STATIONNAME: "teststation01"
       STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
       SENSORSURL: "http://edge-sensors:5000/"
-      DATAHUBURL: "http://datahub-registration:5016/"
-      MQTTURL: "activemq"
-      ENABLESSL: "false"
-      MQTTPORT: "1883"
+      #DATAHUBURL: "http://datahub-registration:5016/"
+      #MQTTHOST: "activemq"
+      #ENABLESSL: "false"
+      #MQTTPORT: "1883"
   edge-service-02:
     image: quay.io/qiot/qiot-service
     container_name: "edge-service-02"
@@ -23,15 +22,14 @@ services:
     ports:
       - "8092:8080"
     environment:
-      QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial02"
       STATIONNAME: "teststation02"
       STATIONADDRESS: "soriano calabro"
       SENSORSURL: "http://edge-sensors:5000/"
-      DATAHUBURL: "http://datahub-registration:5016/"
-      MQTTURL: "activemq"
-      ENABLESSL: "false"
-      MQTTPORT: "1883"
+      #DATAHUBURL: "http://datahub-registration:5016/"
+      #MQTTHOST: "activemq"
+      #ENABLESSL: "false"
+      #MQTTPORT: "1883"
   edge-service-03:
     image: quay.io/qiot/qiot-service
     container_name: "edge-service-03"
@@ -39,15 +37,14 @@ services:
     ports:
       - "8093:8080"
     environment:
-      QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial03"
       STATIONNAME: "teststation03"
       STATIONADDRESS: "minsk"
       SENSORSURL: "http://edge-sensors:5000/"
-      DATAHUBURL: "http://datahub-registration:5016/"
-      MQTTURL: "activemq"
-      ENABLESSL: "false"
-      MQTTPORT: "1883"
+      #DATAHUBURL: "http://datahub-registration:5016/"
+      #MQTTHOST: "activemq"
+      #ENABLESSL: "false"
+      #MQTTPORT: "1883"
 networks:
   default:
     external:
