@@ -1,0 +1,39 @@
+version: '3'
+services:
+  edge-messaging:
+    image: rabbitmq:3
+    container_name: edge-messaging
+    volumes:
+#      - ./volumes/rabbitmq/etc/:/etc/rabbitmq/
+      - ./volumes/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./volumes/rabbitmq/logs/:/var/log/rabbitmq/
+      - ./volumes/rabbitmq/enable_plugins:/etc/rabbitmq/enabled_plugins
+    environment:
+#      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_DEFAULT_USER: qiot
+      RABBITMQ_DEFAULT_PASS: qiot
+    ports:
+      - 5673:5672
+      - 15672:15672
+    expose:
+      - "5672"
+  edge-sensors:
+    image: quay.io/qiot/qiot-sensors-emulator
+    container_name: "edge-sensors"
+    restart: "no"
+    ports:
+      - "5000:5000"
+    environment:
+      QUARKUS_PROFILE: "staging"
+  edge-sensors:
+    image: quay.io/qiot/qiot-sensors-emulator
+    container_name: "edge-sensors"
+    restart: "no"
+    ports:
+      - "5000:5000"
+    environment:
+      QUARKUS_PROFILE: "staging"
+networks:
+  default:
+    external:
+      name: qiot

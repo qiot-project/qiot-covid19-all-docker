@@ -1,7 +1,7 @@
 version: '3'
 services:
   edge-service-01:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiot/qiot-service:1-x86_64
     container_name: "edge-service-01"
     restart: "no"
     ports:
@@ -17,7 +17,7 @@ services:
       ENABLESSL: "false"
       MQTTPORT: "1883"
   edge-service-02:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiot/qiot-service:1-x86_64
     container_name: "edge-service-02"
     restart: "no"
     ports:
@@ -33,7 +33,7 @@ services:
       ENABLESSL: "false"
       MQTTPORT: "1883"
   edge-service-03:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiot/qiot-service:1-x86_64
     container_name: "edge-service-03"
     restart: "no"
     ports:

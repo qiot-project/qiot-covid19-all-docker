@@ -1,0 +1,36 @@
+version: '3'
+services:
+  influxdb:
+    image: influxdb:1.8.2   
+    container_name: "influxdb"
+    ports:
+      - "9999:9999"
+      - "8086:8086"
+    volumes:
+      - ./volumes/influxdb:/data/db
+      
+  chronograph:
+    image: quay.io/influxdb/chronograf:1.8.6
+    container_name: "chronograph"
+    entrypoint: 'chronograf --kapacitor-url=http://kapacitor:9092 --influxdb-url=http://influxdb:8086'
+    depends_on:
+      - "influxdb"
+      - "kapacitor"
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./volumes/influxdb:/var/lib/chronograf
+
+  kapacitor:
+    image: kapacitor
+    container_name: "kapacitor"
+    depends_on:
+      - "influxdb"
+    environment:
+      - KAPACITOR_INFLUXDB_0_URLS_0=http://influxdb:8086
+      - KAPACITOR_HOSTNAME=kapacitor
+networks:
+  default:
+    external:
+      name: influxdb
+      #9340172063e48e0f5473ff47b5b05403c03d2f43c0b107d710dd3e014b966b06

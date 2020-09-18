@@ -1,0 +1,35 @@
+version: '3'
+services:
+  edge-integrator:
+    image: quay.io/qiot/qiot-edge-integrator:1-x86_64
+    container_name: "edge-integrator"
+    restart: "no"
+    environment:
+      AMQPHOST: "edge-messaging"
+      AMQPPORT: 5672
+      AMQPUSERNAME: "qiot"
+      AMQPPASSWORD: "qiot"
+      SENSORSURL: "http://edge-sensors:5000/"
+  edge-server-01:
+    image: quay.io/qiot/qiot-edge-server:1-x86_64
+    container_name: "edge-server-01"
+    restart: "no"
+    ports:
+      - "8091:8080"
+    environment:
+      AMQPHOST: "edge-messaging"
+      AMQPPORT: 5672
+      AMQPUSERNAME: "qiot"
+      AMQPPASSWORD: "qiot"
+      STATIONSERIAL: "teststationserial01"
+      STATIONNAME: "teststation01"
+      STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
+      SENSORSURL: "http://edge-sensors:5000/"
+      DATAHUBURL: "http://datahub-registration:5016/"
+      MQTTURL: "activemq"
+      ENABLESSL: "false"
+      MQTTPORT: "1883"
+networks:
+  default:
+    external:
+      name: qiot

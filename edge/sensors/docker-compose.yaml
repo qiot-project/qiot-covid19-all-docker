@@ -1,13 +1,11 @@
 version: '3'
 services:
   edge-sensors:
-    image: quay.io/qiot/qiot-sensors-emulator
+    image: quay.io/qiot/qiot-sensors-emulator:1-x86_64
     container_name: "edge-sensors"
     restart: "no"
     ports:
       - "5000:5000"
-    environment:
-      QUARKUS_PROFILE: "staging"
 networks:
   default:
     external:
