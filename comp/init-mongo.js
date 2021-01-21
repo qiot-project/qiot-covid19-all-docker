@@ -1,3 +1,4 @@
+#docker exec -it mongoContainer mongo
 use qiot
 db.createUser(
    {

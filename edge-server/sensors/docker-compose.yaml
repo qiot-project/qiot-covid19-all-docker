@@ -18,7 +18,7 @@ services:
     expose:
       - "5672"
   edge-sensors:
-    image: quay.io/qiot/qiot-sensors-emulator
+    image: quay.io/qiotcovid19/qiot-sensors-emulator
     container_name: "edge-sensors"
     restart: "no"
     ports:
@@ -26,7 +26,7 @@ services:
     environment:
       QUARKUS_PROFILE: "staging"
   edge-sensors:
-    image: quay.io/qiot/qiot-sensors-emulator
+    image: quay.io/qiotcovid19/qiot-sensors-emulator
     container_name: "edge-sensors"
     restart: "no"
     ports:
@@ -36,4 +36,4 @@ services:
 networks:
   default:
     external:
-      name: qiot
+      name: edge

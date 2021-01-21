@@ -1,7 +1,7 @@
 version: '3'
 services:
   edge-integrator:
-    image: quay.io/qiot/qiot-edge-integrator:1-x86_64
+    image: quay.io/qiotcovid19/qiot-edge-integrator:1-x86_64
     container_name: "edge-integrator"
     restart: "no"
     environment:
@@ -11,7 +11,7 @@ services:
       AMQPPASSWORD: "qiot"
       SENSORSURL: "http://edge-sensors:5000/"
   edge-server-01:
-    image: quay.io/qiot/qiot-edge-server:1-x86_64
+    image: quay.io/qiotcovid19/qiot-edge-server:1-x86_64
     container_name: "edge-server-01"
     restart: "no"
     ports:
@@ -32,4 +32,4 @@ services:
 networks:
   default:
     external:
-      name: qiot
+      name: edge

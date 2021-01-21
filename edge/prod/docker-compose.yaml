@@ -1,7 +1,7 @@
 version: '3'
 services:
   edge-service-prod-01:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiotcovid19/edge-service:1.2.0
     container_name: "edge-service-prod-01"
     restart: "no"
     ports:
@@ -16,7 +16,7 @@ services:
       #ENABLESSL: "false"
       #MQTTPORT: "1883"
   edge-service-prod-02:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiotcovid19/edge-service:1.2.0
     container_name: "edge-service-prod-02"
     restart: "no"
     ports:
@@ -31,7 +31,7 @@ services:
       #ENABLESSL: "false"
       #MQTTPORT: "1883"
   edge-service-prod-03:
-    image: quay.io/qiot/qiot-service
+    image: quay.io/qiotcovid19/edge-service:1.2.0
     container_name: "edge-service-prod-03"
     restart: "no"
     ports:
@@ -48,4 +48,4 @@ services:
 networks:
   default:
     external:
-      name: qiot
+      name: edge

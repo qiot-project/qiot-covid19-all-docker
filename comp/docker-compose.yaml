@@ -1,0 +1,84 @@
+version: '3'
+services:
+  activemq:
+    image: vromero/activemq-artemis:2-alpine-latest
+    container_name: "activemq"
+    restart: "no"
+    networks:
+      - datahub
+      - qiotconnect
+    ports:
+      - "8161:8161"
+#      - "61616:61616"
+#      - "5672:5672"
+      - "1883:1883"
+    environment:
+      ARTEMIS_USERNAME: "quarkus"
+      ARTEMIS_PASSWORD: "quarkus"
+#  kafdrop:
+#    image: obsidiandynamics/kafdrop
+#    container_name: "kafkadrop"
+#    restart: "no"
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      KAFKA_BROKERCONNECT: "kafka:29092"
+#      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+#    depends_on:
+#      - "kafka"
+  kafka:
+    image: obsidiandynamics/kafka
+    container_name: "kafka"
+    restart: "no"
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://kafka:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+  mongo:
+    image: "mongo"
+    container_name: "mongo"
+    environment:
+      MONGO_INITDB_DATABASE: "qiot"
+      #MONGO_INITDB_ROOT_USERNAME: "root"
+      #MONGO_INITDB_ROOT_PASSWORD: "root"
+    volumes:
+      #- ./init-mongo.js: /docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./volumes/mongo:/data/db
+    ports:
+      - "27017-27019:27017-27019"
+#  mongo-express:
+#    image: mongo-express
+#    container_name: mongo-express
+#    environment:
+#      ME_CONFIG_MONGODB_SERVER: "mongo"
+#      ME_CONFIG_MONGODB_PORT: "27017"
+#      #ME_CONFIG_MONGODB_ENABLE_ADMIN: "false"
+#      #ME_CONFIG_MONGODB_AUTH_DATABASE: "qiot"
+#      #ME_CONFIG_MONGODB_AUTH_USERNAME: "qiot"
+#      #ME_CONFIG_MONGODB_AUTH_PASSWORD: "qiot"
+#    ports:
+#      - "8081:8081"
+#  influx:
+#    image: "quay.io/influxdb/influxdb:v2.0.3"
+#    container_name: "influx"
+#    volumes:
+#      - ./volumes/influxdb2:/root/.influxdbv2
+#    ports:
+#      - "8086:8086"
+#      - "9999:9999"
+networks:
+  datahub:
+    external: true
+  qiotconnect:
+    external: true
+  default:
+    external:
+      name: datahub

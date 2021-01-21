@@ -1,9 +1,12 @@
 version: '3'
 services:
   datahub-registration:
-    image: quay.io/qiot/qiot-datahub-registration
+    image: quay.io/qiotcovid19/qiot-datahub-registration:1.0.1
     container_name: "datahub-registration"
     restart: "no"
+    networks:
+      - datahub
+      - qiotconnect
     ports:
       - "5016:5016"
     environment:
@@ -11,7 +14,7 @@ services:
       HTTPPORT: "5016"
       MONGODBURL: "mongo:27017"
   datahub-aggregation:
-    image: quay.io/qiot/qiot-datahub-aggregation
+    image: quay.io/qiotcovid19/qiot-datahub-aggregation:1.0.1
     container_name: "datahub-aggregation"
     restart: "no"
     ports:
@@ -21,7 +24,7 @@ services:
       HTTPPORT: "5018"
       MONGODBURL: "mongo:27017"
   datahub-query:
-    image: quay.io/qiot/qiot-datahub-query
+    image: quay.io/qiotcovid19/qiot-datahub-query:1.0.1
     container_name: "datahub-query"
     restart: "no"
     ports:
@@ -31,29 +34,15 @@ services:
       HTTPPORT: "5200"
       MONGODBURL: "mongo:27017"
   endpoint-mqtt:
-    image: quay.io/qiot/qiot-datahub-endpoint-mqtt
+    image: quay.io/qiotcovid19/qiot-datahub-endpoint-mqtt:1.0.1
     container_name: "datahub-endpoint-mqtt"
     restart: "no"
     environment:
       QUARKUS_PROFILE: "staging"
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
-#  gasstreamer:
-#    image: quay.io/qiot/qiot-datahub-streamer-gas
-#    container_name: "datahub-streamer-gas"
-#    restart: "no"
-#    environment:
-#      MESSAGINGHOST: "activemq"
-#      KAFKABOOTSTRAPURL: "kafka:9092"
-#  pollutionstreamer:
-#    image: quay.io/qiot/qiot-datahub-streamer-pollution
-#    container_name: "datahub-streamer-pollution"
-#    restart: "no"
-#    environment:
-#      MESSAGINGHOST: "activemq"
-#      KAFKABOOTSTRAPURL: "kafka:9092"
   gasstorer:
-    image: quay.io/qiot/qiot-datahub-storer-gas
+    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:1.0.1
     container_name: "datahub-storer-gas"
     restart: "no"
     environment:
@@ -61,7 +50,7 @@ services:
       KAFKABOOTSTRAPURL: "kafka:9092"
       MONGODBURL: "mongo:27017"
   pollutionstorer:
-    image: quay.io/qiot/qiot-datahub-storer-pollution
+    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:1.0.1
     container_name: "datahub-storer-pollution"
     restart: "no"
     environment:
@@ -69,6 +58,10 @@ services:
       KAFKABOOTSTRAPURL: "kafka:9092"
       MONGODBURL: "mongo:27017"
 networks:
+  datahub:
+    external: true
+  qiotconnect:
+    external: true
   default:
     external:
-      name: qiot
+      name: datahub
