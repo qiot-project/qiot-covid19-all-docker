@@ -47,33 +47,51 @@ services:
     container_name: "mongo"
     environment:
       MONGO_INITDB_DATABASE: "qiot"
-      #MONGO_INITDB_ROOT_USERNAME: "root"
-      #MONGO_INITDB_ROOT_PASSWORD: "root"
     volumes:
-      #- ./init-mongo.js: /docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./volumes/mongo:/data/db
+      - mongodb-storage:/data/db
     ports:
       - "27017-27019:27017-27019"
-#  mongo-express:
-#    image: mongo-express
-#    container_name: mongo-express
-#    environment:
-#      ME_CONFIG_MONGODB_SERVER: "mongo"
-#      ME_CONFIG_MONGODB_PORT: "27017"
-#      #ME_CONFIG_MONGODB_ENABLE_ADMIN: "false"
-#      #ME_CONFIG_MONGODB_AUTH_DATABASE: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_USERNAME: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_PASSWORD: "qiot"
-#    ports:
-#      - "8081:8081"
-#  influx:
-#    image: "quay.io/influxdb/influxdb:v2.0.3"
-#    container_name: "influx"
-#    volumes:
-#      - ./volumes/influxdb2:/root/.influxdbv2
-#    ports:
-#      - "8086:8086"
-#      - "9999:9999"
+  mongo-express:
+    image: "mongo-express"
+    container_name: "mongo-express"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "mongo"
+      ME_CONFIG_MONGODB_PORT: "27017"
+      #ME_CONFIG_MONGODB_ENABLE_ADMIN: "false"
+      ME_CONFIG_MONGODB_AUTH_DATABASE: "qiot"
+      ME_CONFIG_MONGODB_AUTH_USERNAME: "qiot"
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: "qiot"
+    ports:
+      - "8081:8081"
+  influxdb:
+    image: "quay.io/influxdb/influxdb:v2.0.3"
+    container_name: "influxdb"
+    ports:
+      - "8086:8086"
+      - "9999:9999"
+    volumes:
+      - influxdb-storage:/root/.influxdbv2
+    environment:
+      - INFLUXDB_DB=qiot
+      - INFLUXDB_ADMIN_USER=qiot
+      - INFLUXDB_ADMIN_PASSWORD=qiot
+  grafana:
+    image: "grafana/grafana"
+    container_name: "grafana"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./volumes/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=qiot
+      - GF_SECURITY_ADMIN_PASSWORD=qiot
+volumes:
+  mongodb-storage:
+  influxdb-storage:
+  grafana-storage:
 networks:
   datahub:
     external: true
