@@ -1,29 +1,32 @@
 version: '3'
 services:
-  localization-service:
+  qiot-datahub-localization-service:
     image: quay.io/qiotcovid19/qiot-datahub-localization:1.0.0-alpha
-    container_name: "localization-service"
-    restart: "always"
-    networks:
-      - datahub
-    expose:
-      - "8080"
-
-  station-service:
-    image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0-alpha
-    container_name: "station-service"
+    container_name: "qiot-datahub-localization-service"
     restart: "always"
     networks:
       - datahub
     expose:
       - "8080"
     environment:
-      DBHOST: "mysql"
-      LOCALIZATION-SERVICE-URL: "http://localization-service:8080"
+      QUARKUS_PROFILE: "staging"
 
-  registration-service:
+  qiot-datahub-station-service:
+    image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0-alpha
+    container_name: "qiot-datahub-station-service"
+    restart: "always"
+    networks:
+      - datahub
+    expose:
+      - "8080"
+    environment:
+      QUARKUS_PROFILE: "staging"
+      DBHOST: "mysql"
+      LOCALIZATION-SERVICE-URL: "http://qiot-datahub-localization-service:8080"
+
+  qiot-datahub-registration-service:
     image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0-alpha
-    container_name: "registration-service"
+    container_name: "qiot-datahub-registration-service"
     restart: "always"
     networks:
       - datahub
@@ -33,28 +36,31 @@ services:
     ports:
       - "10001:8080"
     environment:
-      STATION-SERVICE-URL: "http://station-service:8080"
+      QUARKUS_PROFILE: "staging"
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       CERTLOCAL: "true"
       LOGLEVEL: "FINE"
       
-  gas-collector:
+  qiot-datahub-gas-collector-service:
     image: quay.io/qiotcovid19/qiot-datahub-collector-gas:1.0.0-alpha
-    container_name: "gas-collector"
+    container_name: "qiot-datahub-gas-collector-service"
     restart: "always"
     networks:
       - datahub
     environment:
       QUARKUS_PROFILE: "staging"
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
-  pollution-collector:
+  qiot-datahub-pollution-collector-service:
     image: quay.io/qiotcovid19/qiot-datahub-collector-pollution:1.0.0-alpha
-    container_name: "pollution-collector"
+    container_name: "qiot-datahub-pollution-collector-service"
     restart: "always"
     networks:
       - datahub
     environment:
       QUARKUS_PROFILE: "staging"
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
 
@@ -87,30 +93,30 @@ services:
 #      AMQPHOST: "activemq"
 #      MQTTHOST: "activemq"
 
-#  gasstorer:
-#    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:1.0.1
-#    container_name: "datahub-storer-gas"
-#    restart: "always"
-#    environment:
-#      QUARKUS_PROFILE: "staging"
-#      KAFKABOOTSTRAPURL: "kafka:9092"
-#      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
-#      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
-#      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
-#      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
-#      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
-#  pollutionstorer:
-#    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:1.0.1
-#    container_name: "datahub-storer-pollution"
-#    restart: "always"
-#    environment:
-#      QUARKUS_PROFILE: "staging"
-#      KAFKABOOTSTRAPURL: "kafka:9092"
-#      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
-#      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
-#      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
-#      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
-#      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
+  qiot-datahub-gas-storer-service:
+    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0-alpha
+    container_name: "datahub-storer-gas"
+    restart: "always"
+    environment:
+      QUARKUS_PROFILE: "staging"
+      KAFKABOOTSTRAPURL: "kafka:9092"
+      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
+      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
+      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
+      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
+      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
+  qiot-datahub-pollution-storer-service:
+    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:2.0.0-alpha
+    container_name: "datahub-storer-pollution"
+    restart: "always"
+    environment:
+      QUARKUS_PROFILE: "staging"
+      KAFKABOOTSTRAPURL: "kafka:9092"
+      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
+      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
+      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
+      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
+      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
 networks:
   datahub:
     external: true

@@ -1,62 +1,72 @@
 version: '3'
 services:
-  edge-service-01:
-    image: quay.io/qiotcovid19/edge-service:1.2.0-x86_64
-    container_name: "edge-service-01"
+  qiot-edge-service-01:
+    image: quay.io/qiotcovid19/qiot-edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-01"
     restart: "no"
     networks:
       - edge
       - qiotconnect
     ports:
       - "8091:8080"
+    volumes:
+      - device1-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial01"
       STATIONNAME: "teststation01"
       STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
-      SENSORSURL: "http://edge-sensors:5000/"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
       DATAHUBURL: "http://datahub-registration:5016/"
       MQTTURL: "activemq"
       ENABLESSL: "false"
       MQTTPORT: "1883"
-  edge-service-02:
-    image: quay.io/qiotcovid19/edge-service:1.2.0-x86_64
-    container_name: "edge-service-02"
+  qiot-edge-service-02:
+    image: quay.io/qiotcovid19/qiot-edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-02"
     restart: "no"
     networks:
       - edge
       - qiotconnect
     ports:
       - "8092:8080"
+    volumes:
+      - device2-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial02"
       STATIONNAME: "teststation02"
       STATIONADDRESS: "soriano calabro"
-      SENSORSURL: "http://edge-sensors:5000/"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
       DATAHUBURL: "http://datahub-registration:5016/"
       MQTTURL: "activemq"
       ENABLESSL: "false"
       MQTTPORT: "1883"
-  edge-service-03:
-    image: quay.io/qiotcovid19/edge-service:1.2.0-x86_64
-    container_name: "edge-service-03"
+  qiot-edge-service-03:
+    image: quay.io/qiotcovid19/qiot-edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-03"
     restart: "no"
     networks:
       - edge
       - qiotconnect
     ports:
       - "8093:8080"
+    volumes:
+      - device3-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
       STATIONSERIAL: "teststationserial03"
       STATIONNAME: "teststation03"
       STATIONADDRESS: "minsk"
-      SENSORSURL: "http://edge-sensors:5000/"
-      DATAHUBURL: "http://datahub-registration:5016/"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      DATAHUBURL: "http://qiot-datahub-registration-service:5016/"
       MQTTURL: "activemq"
       ENABLESSL: "false"
       MQTTPORT: "1883"
+volumes:
+  device1-storage:
+  device2-storage:
+  device3-storage:
 networks:
   edge:
     external: true
