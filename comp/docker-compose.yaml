@@ -15,17 +15,7 @@ services:
     environment:
       ARTEMIS_USERNAME: "quarkus"
       ARTEMIS_PASSWORD: "quarkus"
-#  kafdrop:
-#    image: obsidiandynamics/kafdrop
-#    container_name: "kafkadrop"
-#    restart: "always"
-#    ports:
-#      - "9000:9000"
-#    environment:
-#      KAFKA_BROKERCONNECT: "kafka:29092"
-#      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-#    depends_on:
-#      - "kafka"
+
   kafka:
     image: obsidiandynamics/kafka
     container_name: "kafka"
@@ -42,27 +32,6 @@ services:
       KAFKA_RESTART_ATTEMPTS: "10"
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
-#  postgres:
-#    image: "postgres" # use latest official postgres version
-#    container_name: "postgres"
-#    restart: "always"
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      POSTGRES_USER: "qiot"
-#      POSTGRES_PASSWORD: "qiot"
-#      POSTGRES_DB: "qiot"
-#    volumes:
-#      - postgres-storage:/var/lib/postgresql/data/  
-#  mongo:
-#    image: "mongo"
-#    container_name: "mongo"
-#    environment:
-#      MONGO_INITDB_DATABASE: "qiot"
-#    volumes:
-#      - mongodb-storage:/data/db
-#    ports:
-#      - "27017-27019:27017-27019"
 
   mysql:
     image: "mysql"
