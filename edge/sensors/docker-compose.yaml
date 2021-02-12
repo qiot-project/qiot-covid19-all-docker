@@ -2,7 +2,7 @@ version: '3'
 services:
   qiot-edge-sensors:
     image: quay.io/qiotcovid19/edge-sensors-emulator:1.0.1-x86_64
-    container_name: "edge-sensors"
+    container_name: "qiot-edge-sensors"
     restart: "no"
     ports:
       - "5000:5000"

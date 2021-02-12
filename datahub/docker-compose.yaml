@@ -64,38 +64,9 @@ services:
       AMQPHOST: "activemq"
       MQTTHOST: "activemq"
 
-#  datahub-aggregation:
-#    image: quay.io/qiotcovid19/qiot-datahub-aggregation:1.0.1
-#    container_name: "datahub-aggregation"
-#    restart: "always"
-#    ports:
-#      - "5018:5018"
-#    environment:
-#      QUARKUS_PROFILE: "staging"
-#      HTTPPORT: "5018"
-#      MONGODBURL: "mongo:27017"
-#  datahub-query:
-#    image: quay.io/qiotcovid19/qiot-datahub-query:1.0.1
-#    container_name: "datahub-query"
-#    restart: "always"
-#    ports:
-#      - "5200:5200"
-#    environment:
-#      QUARKUS_PROFILE: "staging"
-#      HTTPPORT: "5200"
-#      MONGODBURL: "mongo:27017"
-#  endpoint-mqtt:
-#    image: quay.io/qiotcovid19/qiot-datahub-endpoint-mqtt:1.0.1
-#    container_name: "datahub-endpoint-mqtt"
-#    restart: "always"
-#    environment:
-#      QUARKUS_PROFILE: "staging"
-#      AMQPHOST: "activemq"
-#      MQTTHOST: "activemq"
-
   qiot-datahub-gas-storer-service:
     image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0-alpha
-    container_name: "datahub-storer-gas"
+    container_name: "qiot-datahub-gas-storer-service"
     restart: "always"
     environment:
       QUARKUS_PROFILE: "staging"
@@ -107,7 +78,7 @@ services:
       INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
   qiot-datahub-pollution-storer-service:
     image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:2.0.0-alpha
-    container_name: "datahub-storer-pollution"
+    container_name: "qiot-datahub-pollution-storer-service"
     restart: "always"
     environment:
       QUARKUS_PROFILE: "staging"
