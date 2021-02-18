@@ -10,6 +10,7 @@ services:
       - "8080"
     environment:
       QUARKUS_PROFILE: "staging"
+      LOGLEVEL: "FINE"
 
   qiot-datahub-station-service:
     image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0-alpha
