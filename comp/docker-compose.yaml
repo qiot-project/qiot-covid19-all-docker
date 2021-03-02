@@ -33,25 +33,47 @@ services:
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
 
-  mysql:
-    image: "mysql"
-    container_name: "mysql"
-    command: --default-authentication-plugin=mysql_native_password
+#  mysql:
+#    image: "mysql"
+#    container_name: "mysql"
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "qiot"
+#      MYSQL_DATABASE: "qiot"
+#      MYSQL_USER: "qiot"
+#      MYSQL_PASSWORD: "qiot"
+#    ports:
+#      # <Port exposed> : < MySQL Port running inside container>
+#      - '3306:3306'
+#    expose:
+#      # Opens port 3306 on the container
+#      - '3306'
+#      # Where our data will be persisted
+#    volumes:
+#      - mysql-storage:/var/lib/mysql
+#    security_opt:
+#      - seccomp:unconfined
+      
+  postgresql:
+    image: postgres
+    container_name: "postgresql"
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: "qiot"
-      MYSQL_DATABASE: "qiot"
-      MYSQL_USER: "qiot"
-      MYSQL_PASSWORD: "qiot"
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
-      # Where our data will be persisted
+      - "5432:5432"
     volumes:
-      - mysql-storage:/var/lib/mysql
+      - postgres-storage:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "qiot"
+      POSTGRES_PASSWORD: "qiot"
+      POSTGRES_DB: "qiot"
+
+  postgresqladminer:
+    image: adminer
+    container_name: "postgresqladminer"
+    restart: always
+    ports:
+      - "18080:8080"
       
   influxdb:
     image: "quay.io/influxdb/influxdb:v2.0.3"
@@ -84,7 +106,7 @@ volumes:
   grafana-storage:
   mysql-storage:
 #  mongodb-storage:
-#  postgres-storage:
+  postgres-storage:
 networks:
   datahub:
     external: true
