@@ -56,7 +56,7 @@ services:
     environment:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
-      CERTLOCAL: "true"
+      CERT_MANAGER_ENABLED: "false"
       LOGLEVEL: "FINE"
       
   qiot-datahub-gas-collector-service:

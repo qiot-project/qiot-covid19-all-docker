@@ -1,6 +1,6 @@
 /*** LOCALIZATION ***/
 # OK
-oc new-build quay.io/qiot/ubi-quarkus-native-s2i:20.3.1-java11~https://github.com/qiot-project/qiot-datahub-localization.git --name=localization-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-localization.git --name=localization-service
 # OK
 oc patch bc/localization-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
 # OK
@@ -8,27 +8,33 @@ oc start-build localization-service
 # OK
 oc new-app localization-service
 
+
+
 /*** STATION ***/
 # OK
-oc new-build quay.io/qiot/ubi-quarkus-native-s2i:20.3.1-java11~https://github.com/qiot-project/qiot-datahub-station.git  --name=station-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-station.git  --name=station-service
 # OK
-oc patch bc/station-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc patch bc/station-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"8Gi"}}}}'
 # OK
 oc start-build station-service
 # OK
-oc new-app station-service -e DBHOST=mysql -e LOCALIZATION-SERVICE-URL=http://localization-service:8080
+oc new-app station-service -e DBHOST=postgresql -e LOCALIZATION-SERVICE-URL=http://localization-service:8080
+
+
 
 /*** REGISTRATION ***/
 # OK
-oc new-build quay.io/qiot/ubi-quarkus-native-s2i:20.3.1-java11~https://github.com/qiot-project/qiot-datahub-registration.git#v2  --name=registration-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-registration.git#v2  --name=registration-service
 # OK
-oc patch bc/registration-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
+oc patch bc/registration-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"8Gi"}}}}'
 # OK
 oc start-build registration-service
 # OK
-oc new-app registration-service -e STATION-SERVICE-URL=http://station-service:8080 -e CERTLOCAL=true
+oc new-app registration-service -e STATION-SERVICE-URL=http://station-service:8080 -e CERT_MANAGER_ENABLED=false -e LOGLEVEL=FINE
 # OK
 oc expose svc/registration-service
+
+
 
 /*** GAS COLLECTOR ***/
 # OK
@@ -45,6 +51,8 @@ oc new-app gas-collector-service \
 -e STATION-SERVICE-URL=http://station-service:8080 \
 -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092
 
+
+
 /*** POLLUTION COLLECTOR ***/
 # OK
 oc new-build quay.io/qiot/ubi-quarkus-native-s2i:20.3.1-java11~https://github.com/qiot-project/qiot-datahub-collector.git \
@@ -60,13 +68,15 @@ oc new-app pollution-collector-service \
 -e STATION-SERVICE-URL=http://station-service:8080 \
 -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092
 
+
+
 /*** GAS STORER ***/
 # OK
 oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.com/qiot-project/qiot-datahub-storer.git#v2 \
   --context-dir=. --name=gas-storer-service \
   --build-env='MAVEN_ARGS= -pl qiot-datahub-storer-gas -am' \
-  --build-env='MAVEN_S2I_ARTIFACT_DIRS=qiot-datahub-storer-gas/target' \
-  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*-runner.jar lib' 
+  --build-env='MAVEN_S2I_ARTIFACT_DIRS=qiot-datahub-storer-gas/target/quarkus-app' \
+  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*.jar lib app quarkus' 
 # OK
 oc new-app gas-storer-service \
  -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092 \
@@ -81,8 +91,8 @@ oc new-app gas-storer-service \
 oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.com/qiot-project/qiot-datahub-storer.git#v2 \
   --context-dir=. --name=pollution-storer-service \
   --build-env='MAVEN_ARGS= -pl qiot-datahub-storer-pollution -am' \
-  --build-env='MAVEN_S2I_ARTIFACT_DIRS=qiot-datahub-storer-pollution/target' \
-  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*-runner.jar lib' 
+  --build-env='MAVEN_S2I_ARTIFACT_DIRS=qiot-datahub-storer-pollution/target/quarkus-app' \
+  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*.jar lib app quarkus' 
 # OK
 oc new-app pollution-storer-service \
  -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092 \
@@ -92,25 +102,22 @@ oc new-app pollution-storer-service \
  -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
  -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
 
-/*** IMPORTER ***/
-# OK
-oc new-build registry.access.redhat.com/ubi8/openjdk-11~https://github.com/qiot-project/qiot-datahub-importer.git#v2  --name=importer-service
+
+
+/*** HISTORICAL_DATA ***/
 # TODO
-oc new-app importer-service -e MONGODBURL=mongodb:27017
+oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.com/qiot-project/qiot-datahub-importer.git#v2 \
+  --context-dir=. --name=historical-data-service \
+  --build-env='MAVEN_ARGS= -Dquarkus.package.type=fast-jar' \
+  --build-env='MAVEN_S2I_ARTIFACT_DIRS=target/quarkus-app' \
+  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*.jar lib app quarkus' 
+# TODO
+oc new-app historical-data-service \
+ -e DBHOST=postgresql \
+ -e INFLUXDB_CONNECTION_STRING=http://timeseries-service-influxdb2 \
+ -e INFLUXDB_ORG_ID=qiot \
+ -e INFLUXDB_DATA_BUCKET_ID=covid19 \
+ -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
+ -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
 # OK
-oc expose svc/importer-service
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+oc expose svc/historical-data-service
