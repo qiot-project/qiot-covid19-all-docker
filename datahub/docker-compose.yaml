@@ -52,7 +52,7 @@ services:
     expose:
       - "8080"
     ports:
-      - "10001:8080"
+      - "8443:8443"
     environment:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
@@ -68,8 +68,7 @@ services:
     environment:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
-      AMQPHOST: "activemq"
-      MQTTHOST: "activemq"
+      MQTTHOST: "mosquitto"
   qiot-datahub-pollution-collector-service:
     image: quay.io/qiotcovid19/qiot-datahub-collector-pollution:1.0.0-alpha
     container_name: "qiot-datahub-pollution-collector-service"
@@ -79,8 +78,7 @@ services:
     environment:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
-      AMQPHOST: "activemq"
-      MQTTHOST: "activemq"
+      MQTTHOST: "mosquitto"
 
   qiot-datahub-gas-storer-service:
     image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0-alpha

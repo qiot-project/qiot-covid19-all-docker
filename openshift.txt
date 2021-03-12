@@ -32,7 +32,7 @@ oc start-build registration-service
 # OK
 oc new-app registration-service -e STATION-SERVICE-URL=http://station-service:8080 -e CERT_MANAGER_ENABLED=false -e LOGLEVEL=FINE
 # OK
-oc expose svc/registration-service
+oc create route passthrough registration-service --service=registration-service
 
 
 

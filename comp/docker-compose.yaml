@@ -1,20 +1,35 @@
 version: '3'
 services:
-  activemq:
-    image: vromero/activemq-artemis:2-alpine-latest
-    container_name: "activemq"
+#  activemq:
+#    image: vromero/activemq-artemis:2-alpine-latest
+#    container_name: "activemq"
+#    restart: "always"
+#    networks:
+#      - datahub
+#      - qiotconnect
+#    ports:
+#      - "8161:8161"
+##      - "61616:61616"
+##      - "5672:5672"
+#      - "1883:1883"
+#    environment:
+#      ARTEMIS_USERNAME: "quarkus"
+#      ARTEMIS_PASSWORD: "quarkus"
+
+  mosquitto:
+    image: eclipse-mosquitto:1.6.2
+    container_name: "mosquitto"
     restart: "always"
     networks:
       - datahub
       - qiotconnect
     ports:
-      - "8161:8161"
-#      - "61616:61616"
-#      - "5672:5672"
-      - "1883:1883"
-    environment:
-      ARTEMIS_USERNAME: "quarkus"
-      ARTEMIS_PASSWORD: "quarkus"
+    - "1883:1883"
+    - "9001:9001"
+#    volumes:
+#      - mosquitto-storage-config:/mosquitto/config
+#      - mosquitto-storage-data:/mosquitto/data
+#      - mosquitto-storage-logs:/mosquitto/log
 
   kafka:
     image: obsidiandynamics/kafka
@@ -107,6 +122,9 @@ volumes:
   mysql-storage:
 #  mongodb-storage:
   postgres-storage:
+  mosquitto-storage-data:
+  mosquitto-storage-logs:
+  mosquitto-storage-config:
 networks:
   datahub:
     external: true
