@@ -41,6 +41,7 @@ services:
       QUARKUS_PROFILE: "staging"
       DBHOST: "postgresql"
       LOCALIZATION-SERVICE-URL: "http://qiot-datahub-localization-service:8080"
+      LOGLEVEL: "FINE"
 
   qiot-datahub-registration-service:
     image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0-alpha

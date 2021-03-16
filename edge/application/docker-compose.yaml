@@ -13,9 +13,9 @@ services:
       - device1-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
-      STATIONSERIAL: "teststationserialS01"
-      STATIONNAME: "teststationS01"
-      STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
+      STATIONSERIAL: "teststationserials01"
+      STATIONNAME: "teststationserials01"
+      STATIONADDRESS: "viale john fitzgerald kennedy 2D vibo valentia"
       SENSORSURL: "http://qiot-edge-sensors:5000/"
       REGISTRATION-SERVICE-URL: "https://qiot-datahub-registration-service:8443/"
       MQTTURL: "mosquitto"
@@ -36,8 +36,8 @@ services:
       - device2-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
-      STATIONSERIAL: "teststationserialS02"
-      STATIONNAME: "teststationS02"
+      STATIONSERIAL: "teststationserials02"
+      STATIONNAME: "teststations02"
       STATIONADDRESS: "soriano calabro"
       SENSORSURL: "http://qiot-edge-sensors:5000/"
       REGISTRATION-SERVICE-URL: "https://qiot-datahub-registration-service:8443/"
@@ -59,8 +59,8 @@ services:
       - device3-storage:/var/data/qiot/
     environment:
       QUARKUS_PROFILE: "staging"
-      STATIONSERIAL: "teststationserialS03"
-      STATIONNAME: "teststationS03"
+      STATIONSERIAL: "teststationserials03"
+      STATIONNAME: "teststations03"
       STATIONADDRESS: "minsk"
       SENSORSURL: "http://qiot-edge-sensors:5000/"
       REGISTRATION-SERVICE-URL: "https://qiot-datahub-registration-service:8443/"
