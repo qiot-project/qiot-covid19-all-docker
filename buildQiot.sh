@@ -1,28 +1,37 @@
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-storer/qiot-datahub-storer-gas/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-storer/qiot-datahub-storer-pollution/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-aggregation/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-query/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-importer/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-registration/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-endpoint/qiot-datahub-endpoint-mqtt/
-chmod +x build.sh
-./build.sh
-#cd /home/abattagl/git/qiot/edge/qiot-sensors-emulator/
-#chmod +x build.sh
-#./build.sh
-#cd /home/abattagl/git/qiot/edge/qiot-service/
-#chmod +x build.sh
-#./build.sh
+#!/bin/bash
+
+set -x
+set -e
+
+# To speed up the development cycle, this builds the container images in NON native mode
+
+# Default profile: dev
+IPROFILE="${PROFILE:-dev}"
+
+cd ../qiot-datahub-localization/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-station/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-registration/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-query/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-collector/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-storer/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-datahub-importer/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-edge-sensors-emulator/
+mvn clean package install -Dquarkus.profile=$IPROFILE
+
+cd ../qiot-edge-service/
+mvn clean package install -Dquarkus.profile=$IPROFILE
 

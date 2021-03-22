@@ -1,51 +1,93 @@
 version: '3'
 services:
-  edge-service-prod-01:
-    image: quay.io/qiotcovid19/edge-service:1.2.0
-    container_name: "edge-service-prod-01"
+  qiot-edge-service-P-01:
+    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-P-01"
     restart: "no"
+    networks:
+      - edge
     ports:
       - "8091:8080"
+    volumes:
+      - qiot-edge-service-P-01-storage:/var/data/qiot/
     environment:
-      STATIONSERIAL: "teststationserial01"
-      STATIONNAME: "teststation01"
+      STATIONSERIAL: "test-station-serialp01"
+      STATIONNAME: "test-station-p01"
       STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
-      SENSORSURL: "http://edge-sensors:5000/"
-      #DATAHUBURL: "http://datahub-registration:5016/"
-      #MQTTHOST: "activemq"
-      #ENABLESSL: "false"
-      #MQTTPORT: "1883"
-  edge-service-prod-02:
-    image: quay.io/qiotcovid19/edge-service:1.2.0
-    container_name: "edge-service-prod-02"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      REGISTRATION-SERVICE-URL: "https://registration-service-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com/"
+      MQTTURL: "endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
+      MQTTPORT: "443"
+      ENABLESSL: "true"
+      LOGLEVEL: "INFO"
+      
+  qiot-edge-service-P-02:
+    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-P-02"
     restart: "no"
+    networks:
+      - edge
     ports:
       - "8092:8080"
+    volumes:
+      - qiot-edge-service-P-02-storage:/var/data/qiot/
     environment:
-      STATIONSERIAL: "teststationserial02"
-      STATIONNAME: "teststation02"
+      STATIONSERIAL: "test-station-serialp02"
+      STATIONNAME: "test-station-p02"
       STATIONADDRESS: "soriano calabro"
-      SENSORSURL: "http://edge-sensors:5000/"
-      #DATAHUBURL: "http://datahub-registration:5016/"
-      #MQTTHOST: "activemq"
-      #ENABLESSL: "false"
-      #MQTTPORT: "1883"
-  edge-service-prod-03:
-    image: quay.io/qiotcovid19/edge-service:1.2.0
-    container_name: "edge-service-prod-03"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      REGISTRATION-SERVICE-URL: "https://registration-service-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com/"
+      MQTTURL: "endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
+      MQTTPORT: "443"
+      ENABLESSL: "true"
+      LOGLEVEL: "INFO"
+      
+  qiot-edge-service-P-03:
+    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-P-03"
     restart: "no"
+    networks:
+      - edge
     ports:
       - "8093:8080"
+    volumes:
+      - qiot-edge-service-P-03-storage:/var/data/qiot/
     environment:
-      STATIONSERIAL: "teststationserial03"
-      STATIONNAME: "teststation03"
+      STATIONSERIAL: "test-station-serialp03"
+      STATIONNAME: "test-station-p03"
       STATIONADDRESS: "minsk"
-      SENSORSURL: "http://edge-sensors:5000/"
-      #DATAHUBURL: "http://datahub-registration:5016/"
-      #MQTTHOST: "activemq"
-      #ENABLESSL: "false"
-      #MQTTPORT: "1883"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      REGISTRATION-SERVICE-URL: "https://registration-service-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com/"
+      MQTTURL: "endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
+      MQTTPORT: "443"
+      ENABLESSL: "true"
+      LOGLEVEL: "INFO"
+      
+  qiot-edge-service-P-04:
+    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    container_name: "qiot-edge-service-P-04"
+    restart: "no"
+    networks:
+      - edge
+    ports:
+      - "8094:8080"
+    volumes:
+      - qiot-edge-service-P-04-storage:/var/data/qiot/
+    environment:
+      STATIONSERIAL: "test-station-serialp04"
+      STATIONNAME: "test-station-p04"
+      STATIONADDRESS: "New York"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      REGISTRATION-SERVICE-URL: "https://registration-service-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com/"
+      MQTTURL: "endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
+      MQTTPORT: "443"
+      ENABLESSL: "true"
+      LOGLEVEL: "INFO"
+volumes:
+  qiot-edge-service-P-01-storage:
+  qiot-edge-service-P-02-storage:
+  qiot-edge-service-P-03-storage:
+  qiot-edge-service-P-04-storage:
 networks:
-  default:
-    external:
-      name: edge
+  edge:
+    external: true

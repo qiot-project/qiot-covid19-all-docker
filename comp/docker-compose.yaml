@@ -1,40 +1,45 @@
 version: '3'
 services:
-  activemq:
-    image: vromero/activemq-artemis:2-alpine-latest
-    container_name: "activemq"
-    restart: "no"
+#  activemq:
+#    image: vromero/activemq-artemis:2-alpine-latest
+#    container_name: "activemq"
+#    restart: "always"
+#    networks:
+#      - datahub
+#      - qiotconnect
+#    ports:
+#      - "8161:8161"
+##      - "61616:61616"
+##      - "5672:5672"
+#      - "1883:1883"
+#    environment:
+#      ARTEMIS_USERNAME: "quarkus"
+#      ARTEMIS_PASSWORD: "quarkus"
+
+  mosquitto:
+    image: eclipse-mosquitto:1.6.2
+    container_name: "mosquitto"
+    restart: "always"
     networks:
       - datahub
       - qiotconnect
     ports:
-      - "8161:8161"
-#      - "61616:61616"
-#      - "5672:5672"
-      - "1883:1883"
-    environment:
-      ARTEMIS_USERNAME: "quarkus"
-      ARTEMIS_PASSWORD: "quarkus"
-#  kafdrop:
-#    image: obsidiandynamics/kafdrop
-#    container_name: "kafkadrop"
-#    restart: "no"
-#    ports:
-#      - "9000:9000"
-#    environment:
-#      KAFKA_BROKERCONNECT: "kafka:29092"
-#      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-#    depends_on:
-#      - "kafka"
+    - "1883:1883"
+    - "9001:9001"
+#    volumes:
+#      - mosquitto-storage-config:/mosquitto/config
+#      - mosquitto-storage-data:/mosquitto/data
+#      - mosquitto-storage-logs:/mosquitto/log
+
   kafka:
     image: obsidiandynamics/kafka
     container_name: "kafka"
-    restart: "no"
+    restart: "always"
     ports:
       - "2181:2181"
       - "9092:9092"
     environment:
-      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://kafka:9092"
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
       KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://kafka:9092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
@@ -42,38 +47,84 @@ services:
       KAFKA_RESTART_ATTEMPTS: "10"
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
-  mongo:
-    image: "mongo"
-    container_name: "mongo"
-    environment:
-      MONGO_INITDB_DATABASE: "qiot"
-      #MONGO_INITDB_ROOT_USERNAME: "root"
-      #MONGO_INITDB_ROOT_PASSWORD: "root"
-    volumes:
-      #- ./init-mongo.js: /docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./volumes/mongo:/data/db
-    ports:
-      - "27017-27019:27017-27019"
-#  mongo-express:
-#    image: mongo-express
-#    container_name: mongo-express
+
+#  mysql:
+#    image: "mysql"
+#    container_name: "mysql"
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
 #    environment:
-#      ME_CONFIG_MONGODB_SERVER: "mongo"
-#      ME_CONFIG_MONGODB_PORT: "27017"
-#      #ME_CONFIG_MONGODB_ENABLE_ADMIN: "false"
-#      #ME_CONFIG_MONGODB_AUTH_DATABASE: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_USERNAME: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_PASSWORD: "qiot"
+#      MYSQL_ROOT_PASSWORD: "qiot"
+#      MYSQL_DATABASE: "qiot"
+#      MYSQL_USER: "qiot"
+#      MYSQL_PASSWORD: "qiot"
 #    ports:
-#      - "8081:8081"
-#  influx:
-#    image: "quay.io/influxdb/influxdb:v2.0.3"
-#    container_name: "influx"
+#      # <Port exposed> : < MySQL Port running inside container>
+#      - '3306:3306'
+#    expose:
+#      # Opens port 3306 on the container
+#      - '3306'
+#      # Where our data will be persisted
 #    volumes:
-#      - ./volumes/influxdb2:/root/.influxdbv2
-#    ports:
-#      - "8086:8086"
-#      - "9999:9999"
+#      - mysql-storage:/var/lib/mysql
+#    security_opt:
+#      - seccomp:unconfined
+      
+  postgresql:
+    image: postgres
+    container_name: "postgresql"
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-storage:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "qiot"
+      POSTGRES_PASSWORD: "qiot"
+      POSTGRES_DB: "qiot"
+
+  postgresqladminer:
+    image: adminer
+    container_name: "postgresqladminer"
+    restart: always
+    ports:
+      - "18080:8080"
+      
+  influxdb:
+    image: "quay.io/influxdb/influxdb:v2.0.3"
+    container_name: "influxdb"
+    ports:
+      - "8086:8086"
+      - "9999:9999"
+    volumes:
+      - influxdb-storage:/root/.influxdbv2
+    environment:
+      INFLUXDB_DB: "qiot"
+      INFLUXDB_ADMIN_USER: "qiot"
+      INFLUXDB_ADMIN_PASSWORD: "qiot"
+  grafana:
+    image: "grafana/grafana"
+    container_name: "grafana"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./volumes/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      GF_SECURITY_ADMIN_USER: "qiot"
+      GF_SECURITY_ADMIN_PASSWORD: "qiot"
+      
+volumes:
+  influxdb-storage:
+  grafana-storage:
+  mysql-storage:
+#  mongodb-storage:
+  postgres-storage:
+  mosquitto-storage-data:
+  mosquitto-storage-logs:
+  mosquitto-storage-config:
 networks:
   datahub:
     external: true

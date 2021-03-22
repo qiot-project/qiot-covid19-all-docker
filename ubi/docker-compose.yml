@@ -1,0 +1,199 @@
+version: '3'
+
+services:
+
+  activemq:
+    image: vromero/activemq-artemis:2.16.0-alpine
+    container_name: "activemq"
+    networks:
+      - qiotnet
+    environment:
+      BROKER_CONFIG_MAX_DISK_USAGE: -1
+      ARTEMIS_USERNAME: "quarkus"
+      ARTEMIS_PASSWORD: "quarkus"
+      DISABLE_SECURITY: "true"
+
+  kafka:
+    image: obsidiandynamics/kafka
+    container_name: "kafka"
+    networks:
+      - qiotnet
+    environment:
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://kafka:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+
+  postgresql:
+    image: postgres
+    container_name: "postgresql"
+    networks:
+      - qiotnet
+    volumes:
+      - postgres-storage:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "qiot"
+      POSTGRES_PASSWORD: "qiot"
+      POSTGRES_DB: "qiot"
+
+  postgresqladminer:
+    image: adminer
+    container_name: "postgresqladminer"
+    networks:
+      - qiotnet
+    ports:
+      - "18080:8080"
+
+  influxdb:
+    image: influxdb:2.0.4
+    container_name: "influxdb"
+    networks:
+      - qiotnet
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: "qiot"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "qiot_qiot"
+      DOCKER_INFLUXDB_INIT_USER: "qiot"
+      DOCKER_INFLUXDB_INIT_ORG: "qiot"
+      DOCKER_INFLUXDB_INIT_BUCKET: "qiot"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "f8e76711-6fbf-4987-ab12-67cc00c5defa"
+    volumes:
+      - influxdb-storage:/root/.influxdbv2
+
+  grafana:
+    image: grafana/grafana:7.4.5
+    container_name: "grafana"
+    networks:
+      - qiotnet
+    depends_on:
+      - influxdb
+    environment:
+      GF_LOG_MODE: "console"
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
+      GF_SECURITY_ADMIN_USER: "qiot"
+      GF_SECURITY_ADMIN_PASSWORD: "qiot"
+    volumes:
+      - ./grafana-provisioning:/etc/grafana/provisioning:ro
+      - grafana-storage:/var/lib/grafana
+      
+  qiot-datahub-localization-service:
+    image: quay.io/qiotcovid19/qiot-datahub-localization:1.0.0-alpha
+    container_name: "qiot-datahub-localization-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      LOGLEVEL: "FINE"
+
+  qiot-datahub-station-service:
+    image: quay.io/qiotcovid19/qiot-datahub-station:2.0.0-alpha
+    container_name: "qiot-datahub-station-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      DBHOST: "postgresql"
+      LOCALIZATION-SERVICE-URL: "http://qiot-datahub-localization-service:5034"
+
+  qiot-datahub-registration-service:
+    image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0-alpha
+    container_name: "qiot-datahub-registration-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:5033"
+      CERTLOCAL: "true"
+      LOGLEVEL: "FINE"
+      
+  qiot-datahub-gas-collector-service:
+    image: quay.io/qiotcovid19/qiot-datahub-collector-gas:1.0.0-alpha
+    container_name: "qiot-datahub-gas-collector-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      QUARKUS_LOG_LEVEL: DEBUG
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:5033"
+      AMQPHOST: "activemq"
+      MQTTHOST: "activemq"
+      
+  qiot-datahub-pollution-collector-service:
+    image: quay.io/qiotcovid19/qiot-datahub-collector-pollution:1.0.0-alpha
+    container_name: "qiot-datahub-pollution-collector-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      QUARKUS_LOG_LEVEL: DEBUG
+      STATION-SERVICE-URL: "http://qiot-datahub-station-service:5033"
+      AMQPHOST: "activemq"
+      MQTTHOST: "activemq"
+
+  qiot-datahub-gas-storer-service:
+    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0-alpha
+    container_name: "qiot-datahub-gas-storer-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      QUARKUS_LOG_LEVEL: INFO
+      KAFKABOOTSTRAPURL: "kafka:9092"
+      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
+      INFLUXDB_TOKEN: "f8e76711-6fbf-4987-ab12-67cc00c5defa"
+      INFLUXDB_ORG: "qiot"
+      INFLUXDB_DATA_BUCKET: "qiot"
+
+  qiot-datahub-pollution-storer-service:
+    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:2.0.0-alpha
+    container_name: "qiot-datahub-pollution-storer-service"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      QUARKUS_LOG_LEVEL: INFO
+      KAFKABOOTSTRAPURL: "kafka:9092"
+      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
+      INFLUXDB_TOKEN: "f8e76711-6fbf-4987-ab12-67cc00c5defa"
+      INFLUXDB_ORG: "qiot"
+      INFLUXDB_DATA_BUCKET: "qiot"
+
+  qiot-edge-sensors:
+    image: quay.io/qiotcovid19/edge-sensors-emulator:1.0.1-x86_64
+    container_name: "qiot-edge-sensors"
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+
+  qiot-edge-service-P-01:
+    image: quay.io/qiotcovid19/qiot-edge-service:2.0.0-alpha
+    container_name: "qiot-edge-service-P01"
+    depends_on:
+      - qiot-edge-sensors
+    networks:
+      - qiotnet
+    environment:
+      QUARKUS_PROFILE: "dev"
+      QUARKUS_LOG_LEVEL: DEBUG
+      STATIONSERIAL: "test-station-serial-P01"
+      STATIONNAME: "test-station-P01"
+      STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
+      SENSORSURL: "http://qiot-edge-sensors:5000/"
+      REGISTRATION_SERVICE_URL: "http://qiot-datahub-registration-service:5016/"
+      MQTTURL: "tcp://activemq"
+      MQTTPORT: "1883"
+      MQTTENABLESSL: "false"
+
+volumes:
+  influxdb-storage:
+  postgres-storage:
+  grafana-storage:
+
+networks:
+  qiotnet:
+    

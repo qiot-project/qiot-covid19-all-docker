@@ -1,0 +1,23 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    orgId: 1
+    uid: lXnnKNwMz
+    url: http://influxdb:8086
+    editable: false
+    version: 1
+    isDefault: true
+    basicAuth: true 
+    secureJsonData:
+      token: f8e76711-6fbf-4987-ab12-67cc00c5defa
+    jsonData:
+      httpMode: POST
+      defaultBucket: qiot
+      organization: qiot
+      version: Flux
+
+
+
