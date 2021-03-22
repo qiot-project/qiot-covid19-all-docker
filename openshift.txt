@@ -81,9 +81,8 @@ oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.
 oc new-app gas-storer-service \
  -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092 \
  -e INFLUXDB_CONNECTION_STRING=http://timeseries-service-influxdb2 \
- -e INFLUXDB_ORG_ID=qiot \ # 2d67bc8b65cc1c19
- -e INFLUXDB_DATA_BUCKET_ID=covid19 \ # 507dfe460a44c268
- -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
+ -e INFLUXDB_ORG=qiot \ # 2d67bc8b65cc1c19
+ -e INFLUXDB_DATA_BUCKET=covid19 \
  -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
 
 /*** POLLUTION STORER ***/
@@ -97,9 +96,8 @@ oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.
 oc new-app pollution-storer-service \
  -e KAFKABOOTSTRAPURL=stream-service-kafka-bootstrap:9092 \
  -e INFLUXDB_CONNECTION_STRING=http://timeseries-service-influxdb2 \
- -e INFLUXDB_ORG_ID=qiot \
- -e INFLUXDB_DATA_BUCKET_ID=covid19 \
- -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
+ -e INFLUXDB_ORG=qiot \
+ -e INFLUXDB_DATA_BUCKET=covid19 \
  -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
 
 
@@ -115,9 +113,8 @@ oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.
 oc new-app historical-data-service \
  -e DBHOST=postgresql \
  -e INFLUXDB_CONNECTION_STRING=http://timeseries-service-influxdb2 \
- -e INFLUXDB_ORG_ID=qiot \
- -e INFLUXDB_DATA_BUCKET_ID=covid19 \
- -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
+ -e INFLUXDB_ORG=qiot \
+ -e INFLUXDB_DATA_BUCKET=covid19 \
  -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
 # OK
 oc expose svc/historical-data-service
