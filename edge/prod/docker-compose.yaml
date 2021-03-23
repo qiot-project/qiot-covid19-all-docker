@@ -16,7 +16,7 @@ services:
       STATIONADDRESS: "viale john fitzgerald kennedy 2/D vibo valentia"
       SENSORSURL: "http://qiot-edge-sensors:5000/"
       REGISTRATION-SERVICE-URL: "https://registration-service-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com/"
-      MQTTURL: "endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
+      MQTTURL: "ssl://endpoint-service-mqtts-0-svc-rte-qiotcovid19v2.apps.cluster-fcd8.fcd8.example.opentlc.com"
       MQTTPORT: "443"
       ENABLESSL: "true"
       LOGLEVEL: "INFO"

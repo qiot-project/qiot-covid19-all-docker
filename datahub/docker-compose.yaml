@@ -27,7 +27,7 @@ services:
       - "8080"
     environment:
       QUARKUS_PROFILE: "staging"
-      LOGLEVEL: "FINE"
+      LOGLEVEL: "INFO"
 
   qiot-datahub-station-service:
     image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0-alpha
@@ -41,7 +41,7 @@ services:
       QUARKUS_PROFILE: "staging"
       DBHOST: "postgresql"
       LOCALIZATION-SERVICE-URL: "http://qiot-datahub-localization-service:8080"
-      LOGLEVEL: "FINE"
+      LOGLEVEL: "INFO"
 
   qiot-datahub-registration-service:
     image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0-alpha
@@ -58,7 +58,7 @@ services:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       CERT_MANAGER_ENABLED: "false"
-      LOGLEVEL: "FINE"
+      LOGLEVEL: "INFO"
       
   qiot-datahub-gas-collector-service:
     image: quay.io/qiotcovid19/qiot-datahub-collector-gas:1.0.0-alpha
