@@ -1,20 +1,5 @@
 version: '3'
 services:
-#  activemq:
-#    image: vromero/activemq-artemis:2-alpine-latest
-#    container_name: "activemq"
-#    restart: "always"
-#    networks:
-#      - datahub
-#      - qiotconnect
-#    ports:
-#      - "8161:8161"
-##      - "61616:61616"
-##      - "5672:5672"
-#      - "1883:1883"
-#    environment:
-#      ARTEMIS_USERNAME: "quarkus"
-#      ARTEMIS_PASSWORD: "quarkus"
 
   mosquitto:
     image: eclipse-mosquitto:1.6.2
@@ -26,10 +11,6 @@ services:
     ports:
     - "1883:1883"
     - "9001:9001"
-#    volumes:
-#      - mosquitto-storage-config:/mosquitto/config
-#      - mosquitto-storage-data:/mosquitto/data
-#      - mosquitto-storage-logs:/mosquitto/log
 
   kafka:
     image: obsidiandynamics/kafka
@@ -48,28 +29,6 @@ services:
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
 
-#  mysql:
-#    image: "mysql"
-#    container_name: "mysql"
-#    command: --default-authentication-plugin=mysql_native_password
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: "qiot"
-#      MYSQL_DATABASE: "qiot"
-#      MYSQL_USER: "qiot"
-#      MYSQL_PASSWORD: "qiot"
-#    ports:
-#      # <Port exposed> : < MySQL Port running inside container>
-#      - '3306:3306'
-#    expose:
-#      # Opens port 3306 on the container
-#      - '3306'
-#      # Where our data will be persisted
-#    volumes:
-#      - mysql-storage:/var/lib/mysql
-#    security_opt:
-#      - seccomp:unconfined
-      
   postgresql:
     image: postgres
     container_name: "postgresql"
@@ -91,20 +50,29 @@ services:
       - "18080:8080"
       
   influxdb:
-    image: "quay.io/influxdb/influxdb:v2.0.3"
+    image: "influxdb:latest"
     container_name: "influxdb"
     ports:
       - "8086:8086"
       - "9999:9999"
     volumes:
-      - influxdb-storage:/root/.influxdbv2
+      - influxdb-user-storage:/root/.influxdbv2
+      - influxdb-data-storage:/var/lib/influxdb2
+      - influxdb-config-storage:/etc/influxdb2
     environment:
-      INFLUXDB_DB: "qiot"
-      INFLUXDB_ADMIN_USER: "qiot"
-      INFLUXDB_ADMIN_PASSWORD: "qiot"
+      DOCKER_INFLUXDB_INIT_MODE: "setup"
+      DOCKER_INFLUXDB_INIT_USERNAME: "qiot"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "qiotcovid19password"
+      DOCKER_INFLUXDB_INIT_ORG: "qiot"
+      DOCKER_INFLUXDB_INIT_BUCKET: "covid19"
+#     DOCKER_INFLUXDB_INIT_RETENTION: The duration the system's initial bucket should retain data. If not set, the initial bucket will retain data forever
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "qiotcovid19influxdbtoken"
+      
   grafana:
     image: "grafana/grafana"
     container_name: "grafana"
+    links:
+      - influxdb
     ports:
       - "3000:3000"
     volumes:
@@ -117,14 +85,11 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: "qiot"
       
 volumes:
-  influxdb-storage:
+  influxdb-user-storage:
+  influxdb-data-storage:
+  influxdb-config-storage:
   grafana-storage:
-  mysql-storage:
-#  mongodb-storage:
   postgres-storage:
-  mosquitto-storage-data:
-  mosquitto-storage-logs:
-  mosquitto-storage-config:
 networks:
   datahub:
     external: true

@@ -3,9 +3,9 @@ datasources:
   - name: InfluxDB
     type: influxdb
     access: proxy
-    database: qiotcovid19
+    database: qiot
     user: qiot
-    password: qiotcovid19
+    password: qiot
     url: http://influxdb:8086
     isDefault: true
     editable: true
