@@ -1,6 +1,6 @@
 /*** LOCALIZATION ***/
 # OK
-oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-localization.git --name=localization-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0-java11~https://github.com/qiot-project/qiot-datahub-localization.git --name=localization-service
 # OK
 oc patch bc/localization-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"6Gi"}}}}'
 # OK
@@ -12,7 +12,7 @@ oc new-app localization-service
 
 /*** STATION ***/
 # OK
-oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-station.git  --name=station-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0-java11~https://github.com/qiot-project/qiot-datahub-station.git  --name=station-service
 # OK
 oc patch bc/station-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"8Gi"}}}}'
 # OK
@@ -24,7 +24,7 @@ oc new-app station-service -e DBHOST=postgresql -e LOCALIZATION-SERVICE-URL=http
 
 /*** REGISTRATION ***/
 # OK
-oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0.0.2-java11~https://github.com/qiot-project/qiot-datahub-registration.git#v2  --name=registration-service
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0-java11~https://github.com/qiot-project/qiot-datahub-registration.git#v2  --name=registration-service
 # OK
 oc patch bc/registration-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"8Gi"}}}}'
 # OK
@@ -33,7 +33,9 @@ oc start-build registration-service
 oc new-app registration-service -e STATION-SERVICE-URL=http://station-service:8080 -e CERT_MANAGER_ENABLED=false -e LOGLEVEL=FINE
 # OK
 oc create route passthrough registration-service --service=registration-service
-
+# TEST
+oc create configmap override --from-file=registration-ConfigMap.yaml
+oc set volumes deploy/registration-service --add --name=config -m /home/quarkus/config --configmap-name=override --overwrite
 
 
 /*** GAS COLLECTOR ***/
@@ -106,18 +108,11 @@ oc new-app pollution-storer-service \
 
 /*** HISTORICAL_DATA ***/
 # TODO
-oc new-build registry.access.redhat.com/openjdk/openjdk-11-rhel7~https://github.com/qiot-project/qiot-datahub-importer.git#v2 \
-  --context-dir=. --name=historical-data-service \
-  --build-env='MAVEN_ARGS= -Dquarkus.package.type=fast-jar' \
-  --build-env='MAVEN_S2I_ARTIFACT_DIRS=target/quarkus-app' \
-  --build-env='S2I_SOURCE_DEPLOYMENTS_FILTER=*.jar lib app quarkus' 
-# TODO
-oc new-app historical-data-service \
- -e DBHOST=postgresql \
- -e INFLUXDB_CONNECTION_STRING=http://timeseries-service-influxdb2 \
- -e INFLUXDB_ORG_ID=qiot \
- -e INFLUXDB_DATA_BUCKET_ID=covid19 \
- -e INFLUXDB_DATA_BUCKET_NAME=covid19 \
- -e INFLUXDB_TOKEN=JCNTRpJj6AsvqiD7MnRWPZhIrXYpHwusT_Mwvc0I26E6lFJsXNzkaD2SbkIxeeH3TbiakNbbZGm_EKk8dlCCbQ==
+oc new-build quay.io/quarkus/ubi-quarkus-native-s2i:21.0-java11~https://github.com/qiot-project/qiot-datahub-importer.git#v2  \
+  --name=historical-data-service
 # OK
-oc expose svc/historical-data-service
+oc patch bc/historical-data-service -p '{"spec":{"resources":{"limits":{"cpu":"4", "memory":"8Gi"}}}}'
+# OK
+oc start-build historical-data-service
+# OK
+oc new-app historical-data-service -e DBHOST=postgresql
