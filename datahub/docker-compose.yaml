@@ -1,8 +1,8 @@
 version: '3'
 services:
-  qiot-datahub-import-service:
-    image: quay.io/qiotcovid19/qiot-datahub-importer:2.0.0-beta
-    container_name: "qiot-datahub-import-service"
+  qiot-datahub-historicaldata-service:
+    image: quay.io/qiotcovid19/qiot-datahub-historicaldata:2.0.0
+    container_name: "qiot-datahub-historicaldata-service"
     restart: "always"
     networks:
       - datahub
@@ -11,14 +11,14 @@ services:
     environment:
       QUARKUS_PROFILE: "staging"
       DBHOST: "postgresql"
-      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
-      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
-      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
-      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
-      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
+#      INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
+#      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
+#      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
+#      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
+#      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
       
   qiot-datahub-localization-service:
-    image: quay.io/qiotcovid19/qiot-datahub-localization:1.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-localization:1.0.0
     container_name: "qiot-datahub-localization-service"
     restart: "always"
     networks:
@@ -30,7 +30,7 @@ services:
       LOGLEVEL: "INFO"
 
   qiot-datahub-station-service:
-    image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-station:1.0.0
     container_name: "qiot-datahub-station-service"
     restart: "always"
     networks:
@@ -44,7 +44,7 @@ services:
       LOGLEVEL: "INFO"
 
   qiot-datahub-registration-service:
-    image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-registration:2.0.0
     container_name: "qiot-datahub-registration-service"
     restart: "always"
     networks:
@@ -58,10 +58,10 @@ services:
       QUARKUS_PROFILE: "staging"
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       CERT_MANAGER_ENABLED: "false"
-      LOGLEVEL: "INFO"
+      LOGLEVEL: "FINE"
       
   qiot-datahub-gas-collector-service:
-    image: quay.io/qiotcovid19/qiot-datahub-collector-gas:1.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-collector-gas:1.0.0
     container_name: "qiot-datahub-gas-collector-service"
     restart: "always"
     networks:
@@ -71,7 +71,7 @@ services:
       STATION-SERVICE-URL: "http://qiot-datahub-station-service:8080"
       MQTTHOST: "mosquitto"
   qiot-datahub-pollution-collector-service:
-    image: quay.io/qiotcovid19/qiot-datahub-collector-pollution:1.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-collector-pollution:1.0.0
     container_name: "qiot-datahub-pollution-collector-service"
     restart: "always"
     networks:
@@ -82,29 +82,29 @@ services:
       MQTTHOST: "mosquitto"
 
   qiot-datahub-gas-storer-service:
-    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-storer-gas:2.0.0
     container_name: "qiot-datahub-gas-storer-service"
     restart: "always"
     environment:
       QUARKUS_PROFILE: "staging"
       KAFKABOOTSTRAPURL: "kafka:9092"
       INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
-      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
-      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
-      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
-      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
+      INFLUXDB_TOKEN: "qiotcovid19influxdbtoken"
+      INFLUXDB_ORG_ID: "qiot"
+      INFLUXDB_DATA_BUCKET_ID: "covid19"
+      INFLUXDB_DATA_BUCKET_NAME: "covid19"
   qiot-datahub-pollution-storer-service:
-    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:2.0.0-alpha
+    image: quay.io/qiotcovid19/qiot-datahub-storer-pollution:2.0.0
     container_name: "qiot-datahub-pollution-storer-service"
     restart: "always"
     environment:
       QUARKUS_PROFILE: "staging"
       KAFKABOOTSTRAPURL: "kafka:9092"
       INFLUXDB_CONNECTION_STRING: "http://influxdb:8086"
-      INFLUXDB_TOKEN: "hBta3AUlJMCb7y4qpG4o1LNGR6CQpbgJi88NYMX2ta8zj5Xi_EBIezhgtPcYNTXhnbKfgcpUbHDgnArIEKxFxA=="
-      INFLUXDB_ORG_ID: "08ebf5cf8aef6f0b"
-      INFLUXDB_DATA_BUCKET_ID: "f073a47029310613"
-      INFLUXDB_DATA_BUCKET_NAME: "qiotcovid19"
+      INFLUXDB_TOKEN: "qiotcovid19influxdbtoken"
+      INFLUXDB_ORG_ID: "qiot"
+      INFLUXDB_DATA_BUCKET_ID: "covid19"
+      INFLUXDB_DATA_BUCKET_NAME: "covid19"
 networks:
   datahub:
     external: true

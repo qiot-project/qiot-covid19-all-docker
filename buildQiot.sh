@@ -16,8 +16,8 @@ chmod +x build*.sh
 ./buildgas.jvm.sh
 ./buildpollution.jvm.sh
 cd ~/git/qiot/datahub/qiot-datahub-importer/
-chmod +x build.jvm.sh
-./build.jvm.sh
+chmod +x build.sh
+./build.sh
 #cd ~/git/qiot/edge/qiot-sensors-emulator/
 #chmod +x build.sh
 #./build.sh
