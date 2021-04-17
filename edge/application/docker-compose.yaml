@@ -1,7 +1,7 @@
 version: '3'
 services:
   qiot-edge-service-01:
-    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    image: quay.io/qiotcovid19/edge-service:2.0.0-RC-x86_64
     container_name: "qiot-edge-service-01"
     restart: "no"
     networks:
@@ -24,7 +24,7 @@ services:
       LOGLEVEL: "INFO"
 
   qiot-edge-service-02:
-    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    image: quay.io/qiotcovid19/edge-service:2.0.0-RC-x86_64
     container_name: "qiot-edge-service-02"
     restart: "no"
     networks:
@@ -47,7 +47,7 @@ services:
       LOGLEVEL: "INFO"
 
   qiot-edge-service-03:
-    image: quay.io/qiotcovid19/edge-service:2.0.0-alpha-x86_64
+    image: quay.io/qiotcovid19/edge-service:2.0.0-RC-x86_64
     container_name: "qiot-edge-service-03"
     restart: "no"
     networks:
