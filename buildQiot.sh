@@ -1,28 +1,27 @@
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-storer/qiot-datahub-storer-gas/
+cd ~/git/qiot/datahub/qiot-datahub-localization/
 chmod +x build.sh
 ./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-storer/qiot-datahub-storer-pollution/
+cd ~/git/qiot/datahub/qiot-datahub-station/
 chmod +x build.sh
 ./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-aggregation/
+cd ~/git/qiot/datahub/qiot-datahub-registration/
 chmod +x build.sh
 ./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-query/
+cd ~/git/qiot/datahub/qiot-datahub-collector/
+chmod +x build*.sh
+./buildgas.sh
+./buildpollution.sh
+cd ~/git/qiot/datahub/qiot-datahub-storer/
+chmod +x build*.sh
+./buildgas.jvm.sh
+./buildpollution.jvm.sh
+cd ~/git/qiot/datahub/qiot-datahub-importer/
 chmod +x build.sh
 ./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-importer/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-registration/
-chmod +x build.sh
-./build.sh
-cd /home/abattagl/git/qiot/datahub/qiot-datahub-endpoint/qiot-datahub-endpoint-mqtt/
-chmod +x build.sh
-./build.sh
-#cd /home/abattagl/git/qiot/edge/qiot-sensors-emulator/
+#cd ~/git/qiot/edge/qiot-sensors-emulator/
 #chmod +x build.sh
 #./build.sh
-#cd /home/abattagl/git/qiot/edge/qiot-service/
+#cd ~/git/qiot/edge/qiot-service/
 #chmod +x build.sh
 #./build.sh
 

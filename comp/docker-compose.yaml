@@ -1,40 +1,26 @@
 version: '3'
 services:
-  activemq:
-    image: vromero/activemq-artemis:2-alpine-latest
-    container_name: "activemq"
-    restart: "no"
+
+  mosquitto:
+    image: eclipse-mosquitto:1.6.2
+    container_name: "mosquitto"
+    restart: "always"
     networks:
       - datahub
       - qiotconnect
     ports:
-      - "8161:8161"
-#      - "61616:61616"
-#      - "5672:5672"
-      - "1883:1883"
-    environment:
-      ARTEMIS_USERNAME: "quarkus"
-      ARTEMIS_PASSWORD: "quarkus"
-#  kafdrop:
-#    image: obsidiandynamics/kafdrop
-#    container_name: "kafkadrop"
-#    restart: "no"
-#    ports:
-#      - "9000:9000"
-#    environment:
-#      KAFKA_BROKERCONNECT: "kafka:29092"
-#      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-#    depends_on:
-#      - "kafka"
+    - "1883:1883"
+    - "9001:9001"
+
   kafka:
     image: obsidiandynamics/kafka
     container_name: "kafka"
-    restart: "no"
+    restart: "always"
     ports:
       - "2181:2181"
       - "9092:9092"
     environment:
-      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://kafka:9092"
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
       KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://kafka:9092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
@@ -42,38 +28,68 @@ services:
       KAFKA_RESTART_ATTEMPTS: "10"
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
-  mongo:
-    image: "mongo"
-    container_name: "mongo"
-    environment:
-      MONGO_INITDB_DATABASE: "qiot"
-      #MONGO_INITDB_ROOT_USERNAME: "root"
-      #MONGO_INITDB_ROOT_PASSWORD: "root"
-    volumes:
-      #- ./init-mongo.js: /docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./volumes/mongo:/data/db
+
+  postgresql:
+    image: postgres
+    container_name: "postgresql"
+    restart: always
     ports:
-      - "27017-27019:27017-27019"
-#  mongo-express:
-#    image: mongo-express
-#    container_name: mongo-express
-#    environment:
-#      ME_CONFIG_MONGODB_SERVER: "mongo"
-#      ME_CONFIG_MONGODB_PORT: "27017"
-#      #ME_CONFIG_MONGODB_ENABLE_ADMIN: "false"
-#      #ME_CONFIG_MONGODB_AUTH_DATABASE: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_USERNAME: "qiot"
-#      #ME_CONFIG_MONGODB_AUTH_PASSWORD: "qiot"
-#    ports:
-#      - "8081:8081"
-#  influx:
-#    image: "quay.io/influxdb/influxdb:v2.0.3"
-#    container_name: "influx"
-#    volumes:
-#      - ./volumes/influxdb2:/root/.influxdbv2
-#    ports:
-#      - "8086:8086"
-#      - "9999:9999"
+      - "5432:5432"
+    volumes:
+      - postgres-storage:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "qiot"
+      POSTGRES_PASSWORD: "qiot"
+      POSTGRES_DB: "qiot"
+
+  postgresqladminer:
+    image: adminer
+    container_name: "postgresqladminer"
+    restart: always
+    ports:
+      - "18080:8080"
+      
+  influxdb:
+    image: "influxdb:latest"
+    container_name: "influxdb"
+    ports:
+      - "8086:8086"
+      - "9999:9999"
+    volumes:
+      - influxdb-user-storage:/root/.influxdbv2
+      - influxdb-data-storage:/var/lib/influxdb2
+      - influxdb-config-storage:/etc/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: "setup"
+      DOCKER_INFLUXDB_INIT_USERNAME: "qiot"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "qiotcovid19password"
+      DOCKER_INFLUXDB_INIT_ORG: "qiot"
+      DOCKER_INFLUXDB_INIT_BUCKET: "covid19"
+#     DOCKER_INFLUXDB_INIT_RETENTION: The duration the system's initial bucket should retain data. If not set, the initial bucket will retain data forever
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "qiotcovid19influxdbtoken"
+      
+  grafana:
+    image: "grafana/grafana"
+    container_name: "grafana"
+    links:
+      - influxdb
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./volumes/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      GF_SECURITY_ADMIN_USER: "qiot"
+      GF_SECURITY_ADMIN_PASSWORD: "qiot"
+      
+volumes:
+  influxdb-user-storage:
+  influxdb-data-storage:
+  influxdb-config-storage:
+  grafana-storage:
+  postgres-storage:
 networks:
   datahub:
     external: true
